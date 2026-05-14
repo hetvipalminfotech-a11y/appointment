@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
@@ -18,16 +18,14 @@ import EditAppointmentScreen from '../screens/Appointments/EditAppointmentScreen
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+export const AuthContext = createContext({
+  logout: () => {},
+});
+
 export default function RootNavigator() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // TEMPORARY FORCED LOGOUT: Calling logout() here ensures that 
-    // next time the app loads, the MMKV user session is cleared so you 
-    // can see, style, and test the Login screen.
-    // (When ready to go to production, simply remove this logout() call!)
-    logout();
-
     // Check if user is already logged in
     const user = getCurrentUser();
     if (user) {
@@ -35,8 +33,14 @@ export default function RootNavigator() {
     }
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    setIsAuthenticated(false);
+  };
+
   return (
-    <NavigationContainer>
+    <AuthContext.Provider value={{ logout: handleLogout }}>
+      <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <Stack.Screen name="Login">
@@ -55,5 +59,6 @@ export default function RootNavigator() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthContext.Provider>
   );
 }

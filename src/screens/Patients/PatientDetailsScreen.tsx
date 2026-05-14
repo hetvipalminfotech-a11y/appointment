@@ -61,7 +61,13 @@ export default function PatientDetailsScreen() {
               </View>
             </View>
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.actionIconBtn}>
+              <TouchableOpacity 
+                style={styles.actionIconBtn}
+                onPress={() => navigation.navigate('AddAppointment', { 
+                  patientId: patient.id, 
+                  patientName: patient.fullName 
+                })}
+              >
                 <Feather name="calendar" size={16} color="#0ea5e9" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionIconBtn} onPress={() => navigation.navigate('EditPatient', { patientId: patient.id })}>

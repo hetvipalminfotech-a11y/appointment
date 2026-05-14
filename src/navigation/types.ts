@@ -3,6 +3,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 export type MainTabParamList = {
   Patients: undefined;
   Appointments: undefined;
+  Logout: undefined;
 };
 
 export type RootStackParamList = {
@@ -11,7 +12,7 @@ export type RootStackParamList = {
   AddPatient: undefined;
   PatientDetails: { patientId: string };
   EditPatient: { patientId: string };
-  AddAppointment: { patientId?: string };
+  AddAppointment: { patientId?: string; patientName?: string };
   AppointmentDetails: { appointmentId: string };
   EditAppointment: { appointmentId: string };
 };

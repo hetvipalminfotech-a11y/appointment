@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   Modal,
   TouchableWithoutFeedback,
-  useWindowDimensions
+  Dimensions
 } from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker from 'react-native-ui-datepicker';
+import dayjs from 'dayjs';
 import { Feather } from '@expo/vector-icons';
 
 interface LibraryDatePickerProps {
@@ -19,143 +19,77 @@ interface LibraryDatePickerProps {
   style?: any;
 }
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 export default function LibraryDatePicker({
   value,
   onSelect,
   placeholder = 'dd/mm/yyyy',
   style
 }: LibraryDatePickerProps) {
-  const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = useWindowDimensions();
   const [visible, setVisible] = useState(false);
-  const [pickerPos, setPickerPos] = useState({ x: 0, y: 0, width: 320, isAbove: false });
-  const triggerRef = useRef<View>(null);
 
-  const parseDateString = (str: string) => {
-    if (str) {
-      const parts = str.split('/').map(Number);
-      if (parts.length === 3) {
-        const [d, m, y] = parts;
-        if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
-          return new Date(y, m - 1, d);
-        }
-      }
+  // Convert string DD/MM/YYYY to dayjs object with validation
+  const parsedDate = dayjs(value, 'DD/MM/YYYY');
+  const dateValue = (value && parsedDate.isValid()) ? parsedDate : dayjs();
+
+  const handleOpen = () => setVisible(true);
+  const handleClose = () => setVisible(false);
+
+  const onDateChange = (params: any) => {
+    if (params.date) {
+      const formattedDate = dayjs(params.date).format('DD/MM/YYYY');
+      onSelect(formattedDate);
+      handleClose();
     }
-    return new Date();
-  };
-
-  const handleOpen = () => {
-    if (Platform.OS === 'android') {
-      setVisible(true);
-    } else {
-      // iOS: Measure to float right underneath
-      triggerRef.current?.measureInWindow((x, y, width, height) => {
-        let yPos = y + height;
-        const pickerHeight = 340; // estimated iOS inline calendar height
-        const pickerWidth = 320; // fixed standard inline calendar width
-        
-        let isAbove = false;
-        if (yPos + pickerHeight > SCREEN_HEIGHT - 40) {
-          yPos = y - pickerHeight;
-          isAbove = true;
-        }
-
-        // Ensure horizontal positioning stays within screen bounds
-        let xPos = x;
-        if (xPos + pickerWidth > SCREEN_WIDTH - 16) {
-          xPos = SCREEN_WIDTH - pickerWidth - 16;
-        }
-        if (xPos < 16) {
-          xPos = 16;
-        }
-
-        setPickerPos({ x: xPos, y: yPos, width: pickerWidth, isAbove });
-        setVisible(true);
-      });
-    }
-  };
-
-  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setVisible(false);
-      if (event.type !== 'dismissed' && selectedDate) {
-        formatAndSend(selectedDate);
-      }
-    } else {
-      // iOS: In-place inline picker
-      if (selectedDate) {
-        formatAndSend(selectedDate);
-      }
-    }
-  };
-
-  const formatAndSend = (dateToFormat: Date) => {
-    const day = dateToFormat.getDate().toString().padStart(2, '0');
-    const month = (dateToFormat.getMonth() + 1).toString().padStart(2, '0');
-    const year = dateToFormat.getFullYear();
-    onSelect(`${day}/${month}/${year}`);
   };
 
   return (
-    <View ref={triggerRef} style={[{ width: '100%' }, style]} collapsable={false}>
+    <View style={[{ width: '100%' }, style]}>
       <TouchableOpacity style={styles.inputWrapper} onPress={handleOpen}>
-        <Feather name="calendar" size={16} color="#94a3b8" style={styles.inputIcon} />
         <Text style={[styles.input, !value && { color: '#94a3b8' }]}>
           {value || placeholder}
         </Text>
+        <Feather name="calendar" size={16} color="#1e293b" />
       </TouchableOpacity>
 
-      {visible && Platform.OS === 'android' && (
-        <DateTimePicker
-          value={parseDateString(value)}
-          mode="date"
-          display="default"
-          onChange={onChange}
-        />
-      )}
-
-      {visible && Platform.OS === 'ios' && (
-        <Modal
-          transparent
-          visible={visible}
-          animationType="none"
-          supportedOrientations={['portrait', 'landscape']}
-          onRequestClose={() => setVisible(false)}
-        >
-          <TouchableWithoutFeedback onPress={() => setVisible(false)}>
-            <View style={styles.overlay}>
-              <TouchableWithoutFeedback>
-                <View
-                  style={[
-                    styles.floatingContainer,
-                    {
-                      position: 'absolute',
-                      top: pickerPos.y,
-                      left: pickerPos.x,
-                      width: pickerPos.width,
-                    },
-                    pickerPos.isAbove ? styles.shadowAbove : styles.shadowBelow
-                  ]}
-                >
-                  <View style={styles.pickerHeader}>
-                    <Text style={styles.headerTitle}>Select Date</Text>
-                    <TouchableOpacity onPress={() => setVisible(false)} style={styles.doneBtn}>
-                      <Text style={styles.doneBtnText}>Done</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.pickerWrapper}>
-                    <DateTimePicker
-                      value={parseDateString(value)}
-                      mode="date"
-                      display="inline"
-                      onChange={onChange}
-                    />
-                  </View>
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleClose}
+      >
+        <TouchableWithoutFeedback onPress={handleClose}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.calendarContainer}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Select Date</Text>
+                  <TouchableOpacity onPress={handleClose}>
+                    <Feather name="x" size={20} color="#64748b" />
+                  </TouchableOpacity>
                 </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      )}
+                
+                <View style={styles.pickerWrapper}>
+                  <DateTimePicker
+                    mode="single"
+                    date={dateValue.toDate()}
+                    onChange={onDateChange}
+                    navigationPosition="around"
+                    styles={{
+                      header: styles.headerText,
+                      day_label: styles.calendarText,
+                      weekday_label: styles.weekDaysText,
+                      selected: { backgroundColor: '#0ea5e9', borderRadius: 10 },
+                      selected_label: { color: '#ffffff' },
+                    }}
+                  />
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
@@ -165,69 +99,68 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 20,
-    paddingHorizontal: '4%',
-    paddingVertical: 14,
-    backgroundColor: '#f8fafc',
+    borderColor: '#e0f2fe',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 56,
+    backgroundColor: '#fbfcfe',
   },
   inputIcon: {
-    marginRight: '2%',
+    marginRight: 10,
   },
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     color: '#0f172a',
   },
-  overlay: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  floatingContainer: {
+  calendarContainer: {
+    width: Math.min(SCREEN_WIDTH - 40, 400),
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderRadius: 24,
     overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
   },
-  pickerHeader: {
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
-  headerTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#334155',
-  },
-  doneBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  doneBtnText: {
-    color: '#0ea5e9',
-    fontSize: 14,
-    fontWeight: 'bold',
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#0f172a',
   },
   pickerWrapper: {
-    padding: 8,
+    padding: 10,
+    paddingBottom: 20,
   },
-  shadowBelow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+  headerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0f172a',
   },
-  shadowAbove: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+  calendarText: {
+    fontSize: 14,
+    color: '#334155',
+  },
+  weekDaysText: {
+    fontSize: 13,
+    color: '#94a3b8',
+    fontWeight: '600',
   },
 });
+
