@@ -6,7 +6,7 @@
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,34 +14,37 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ExpoHospitalApp"
+      "bundleIdentifier": "com.hetvi.hospitalapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.ExpoHospitalApp"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.hetvi.hospitalapp",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
-      "@react-native-community/datetimepicker",
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access the camera to capture patient profile pictures."
+          "cameraPermission": "Allow HospitalApp to access your camera."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to set a profile picture."
+          "photosPermission": "Allow HospitalApp to access your photos."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3e0fbefd-9856-4232-9e09-6157440e322b"
+      }
+    }
   }
 }
