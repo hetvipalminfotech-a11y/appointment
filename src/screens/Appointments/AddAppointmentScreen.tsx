@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, SafeAreaView, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
@@ -183,21 +184,113 @@ export default function AddAppointmentScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#ffffff' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: '5%', paddingVertical: '4%', borderBottomWidth: 1, borderBottomColor: '#f8fafc' },
-  headerLeft: { flexDirection: 'row', alignItems: 'center' },
-  iconContainer: { width: 44, height: 44, backgroundColor: '#f0f9ff', borderRadius: 15, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  title: { fontSize: 20, fontWeight: '900', color: '#1e293b' },
-  subtitle: { fontSize: 10, color: '#94a3b8', fontWeight: '800', letterSpacing: 0.5 },
-  formContainer: { flex: 1, paddingHorizontal: '5%', paddingTop: '5%' },
-  labelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: '3%' },
-  labelText: { fontSize: 11, fontWeight: '900', color: '#94a3b8', marginLeft: 8, letterSpacing: 0.5 },
-  inputWrapper: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#e0f2fe', borderRadius: 16, paddingHorizontal: '4%', height: 56, backgroundColor: '#fbfcfe', marginBottom: '6%' },
-  input: { flex: 1, fontSize: 15, color: '#1e293b', fontWeight: '500' },
-  footerRow: { flexDirection: 'row', paddingHorizontal: '5%', paddingVertical: '4%', borderTopWidth: 1, borderTopColor: '#f8fafc', backgroundColor: 'white' },
-  createBtn: { flex: 2, backgroundColor: '#bae6fd', height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', marginRight: '3%' },
-  createBtnText: { color: 'white', fontWeight: '900', fontSize: 14, letterSpacing: 0.5 },
-  cancelBtn: { flex: 1, backgroundColor: '#f1f5f9', height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  cancelBtnText: { color: '#64748b', fontWeight: '900', fontSize: 13, letterSpacing: 0.5 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: '5%',
+    paddingVertical: '4%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8fafc',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 44,
+    height: 44,
+    backgroundColor: '#f0f9ff',
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#1e293b',
+  },
+  subtitle: {
+    fontSize: 10,
+    color: '#94a3b8',
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: '5%',
+    paddingTop: '5%',
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: '3%',
+  },
+  labelText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#94a3b8',
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0f2fe',
+    borderRadius: 16,
+    paddingHorizontal: '4%',
+    height: 56,
+    backgroundColor: '#fbfcfe',
+    marginBottom: '6%',
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: '#1e293b',
+    fontWeight: '500',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    paddingHorizontal: '5%',
+    paddingVertical: '4%',
+    borderTopWidth: 1,
+    borderTopColor: '#f8fafc',
+    backgroundColor: 'white',
+  },
+  createBtn: {
+    flex: 2,
+    backgroundColor: '#bae6fd',
+    height: 56,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: '3%',
+  },
+  createBtnText: {
+    color: 'white',
+    fontWeight: '900',
+    fontSize: 14,
+    letterSpacing: 0.5,
+  },
+  cancelBtn: {
+    flex: 1,
+    backgroundColor: '#f1f5f9',
+    height: 56,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelBtnText: {
+    color: '#64748b',
+    fontWeight: '900',
+    fontSize: 13,
+    letterSpacing: 0.5,
+  },
 });
 

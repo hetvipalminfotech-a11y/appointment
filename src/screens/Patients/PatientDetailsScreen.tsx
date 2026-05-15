@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
@@ -25,10 +26,12 @@ export default function PatientDetailsScreen() {
   const handleDelete = () => {
     Alert.alert('Delete Patient', 'Are you sure you want to delete this patient?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => {
-        deletePatient(patient.id);
-        navigation.goBack();
-      }}
+      {
+        text: 'Delete', style: 'destructive', onPress: () => {
+          deletePatient(patient.id);
+          navigation.goBack();
+        }
+      }
     ]);
   };
 
@@ -61,11 +64,11 @@ export default function PatientDetailsScreen() {
               </View>
             </View>
             <View style={styles.actionButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.actionIconBtn}
-                onPress={() => navigation.navigate('AddAppointment', { 
-                  patientId: patient.id, 
-                  patientName: patient.fullName 
+                onPress={() => navigation.navigate('AddAppointment', {
+                  patientId: patient.id,
+                  patientName: patient.fullName
                 })}
               >
                 <Feather name="calendar" size={16} color="#0ea5e9" />
@@ -157,39 +160,207 @@ export default function PatientDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f8fafc' },
-  header: { flexDirection: 'row', alignItems: 'center', padding: 20 },
-  backButton: { width: 40, height: 40, backgroundColor: '#e0f2fe', borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 15 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#e0f2fe',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
   headerTitleContainer: {},
-  title: { fontSize: 24, fontWeight: '900', color: '#0f172a' },
-  subtitle: { fontSize: 10, color: '#94a3b8', fontWeight: 'bold', marginTop: 2, letterSpacing: 1 },
-  container: { flex: 1, paddingHorizontal: 20 },
-  profileCard: { backgroundColor: 'white', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#e2e8f0', marginBottom: 20 },
-  profileTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  avatar: { width: 60, height: 60, backgroundColor: '#e0f2fe', borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginRight: 15, overflow: 'hidden' },
-  avatarImage: { width: '100%', height: '100%' },
-  infoContainer: { flex: 1 },
-  name: { fontSize: 18, fontWeight: 'bold', color: '#0f172a' },
-  caseBadge: { backgroundColor: '#e0f2fe', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, marginTop: 5 },
-  caseBadgeText: { fontSize: 10, fontWeight: 'bold', color: '#0ea5e9' },
-  actionButtons: { flexDirection: 'row' },
-  actionIconBtn: { width: 35, height: 35, backgroundColor: '#f1f5f9', borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
-  statsRow: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#f1f5f9', paddingTop: 20 },
-  statBox: { flex: 1, alignItems: 'center' },
-  statDivider: { width: 1, backgroundColor: '#f1f5f9' },
-  statLabel: { fontSize: 10, fontWeight: 'bold', color: '#64748b', marginBottom: 5 },
-  statValueGreen: { fontSize: 18, fontWeight: 'bold', color: '#10b981' },
-  statValueBlue: { fontSize: 18, fontWeight: 'bold', color: '#0ea5e9' },
-  tabsContainer: { flexDirection: 'row', backgroundColor: '#f1f5f9', borderRadius: 12, padding: 5, marginBottom: 20 },
-  tabActive: { flex: 1, backgroundColor: 'white', borderRadius: 8, paddingVertical: 10, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
-  tabInactive: { flex: 1, paddingVertical: 10, alignItems: 'center' },
-  tabTextActive: { fontSize: 12, fontWeight: 'bold', color: '#0ea5e9' },
-  tabTextInactive: { fontSize: 12, fontWeight: 'bold', color: '#64748b' },
-  detailsCard: { backgroundColor: 'white', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#e2e8f0', marginBottom: 30 },
-  detailsHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  detailsTitle: { fontSize: 12, fontWeight: 'bold', color: '#64748b', marginLeft: 8 },
-  detailRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  iconWrapper: { width: 40, height: 40, backgroundColor: '#f8fafc', borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 15 },
-  detailLabel: { fontSize: 10, fontWeight: 'bold', color: '#94a3b8', marginBottom: 2 },
-  detailValue: { fontSize: 14, fontWeight: 'bold', color: '#0f172a' },
+  title: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#0f172a',
+  },
+  subtitle: {
+    fontSize: 10,
+    color: '#94a3b8',
+    fontWeight: 'bold',
+    marginTop: 2,
+    letterSpacing: 1,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  profileCard: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 20,
+  },
+  profileTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#e0f2fe',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  infoContainer: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0f172a',
+  },
+  caseBadge: {
+    backgroundColor: '#e0f2fe',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginTop: 5,
+  },
+  caseBadgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#0ea5e9',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+  },
+  actionIconBtn: {
+    width: 35,
+    height: 35,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+    paddingTop: 20,
+  },
+  statBox: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#f1f5f9',
+  },
+  statLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#64748b',
+    marginBottom: 5,
+  },
+  statValueGreen: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#10b981',
+  },
+  statValueBlue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0ea5e9',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    padding: 5,
+    marginBottom: 20,
+  },
+  tabActive: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  tabInactive: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  tabTextActive: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0ea5e9',
+  },
+  tabTextInactive: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#64748b',
+  },
+  detailsCard: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 30,
+  },
+  detailsHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  detailsTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#64748b',
+    marginLeft: 8,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  detailLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#94a3b8',
+    marginBottom: 2,
+  },
+  detailValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#0f172a',
+  },
 });

@@ -93,8 +93,8 @@ export default function LibraryCameraView({ visible, onClose, onCapture }: Libra
   return (
     <Modal visible={visible} animationType="slide" transparent={false} supportedOrientations={['portrait', 'landscape']}>
       <View style={styles.cameraOuter}>
-        <CameraView 
-          style={styles.camera} 
+        <CameraView
+          style={styles.camera}
           facing={facing}
           ref={cameraRef}
         >
@@ -120,10 +120,10 @@ export default function LibraryCameraView({ visible, onClose, onCapture }: Libra
             {/* Bottom Control Bar */}
             <View style={styles.bottomToolbar}>
               <View style={styles.flexSpacer} />
-              
+
               {/* Shutter Button */}
-              <TouchableOpacity 
-                style={styles.shutterOuter} 
+              <TouchableOpacity
+                style={styles.shutterOuter}
                 onPress={handleTakePicture}
                 disabled={isTakingPicture}
               >
@@ -144,32 +144,182 @@ export default function LibraryCameraView({ visible, onClose, onCapture }: Libra
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#ffffff' },
-  centeredContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' },
-  statusText: { marginTop: '4%', fontSize: 14, color: '#64748b', fontWeight: 'bold' },
-  header: { padding: '4%', alignItems: 'flex-start' },
-  closeBtn: { width: '10%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
-  content: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: '8%', paddingBottom: '15%' },
-  permissionIconBg: { width: '20%', aspectRatio: 1, borderRadius: 25, backgroundColor: '#e0f2fe', alignItems: 'center', justifyContent: 'center', marginBottom: '6%' },
-  titleText: { fontSize: 20, fontWeight: 'bold', color: '#0f172a', marginBottom: '2%' },
-  descText: { fontSize: 14, color: '#64748b', textAlign: 'center', lineHeight: 20, marginBottom: '8%' },
-  primaryBtn: { backgroundColor: '#0ea5e9', width: '100%', paddingVertical: '3.5%', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  primaryBtnText: { color: 'white', fontWeight: 'bold', fontSize: 14 },
-  
-  cameraOuter: { flex: 1, backgroundColor: 'black' },
-  camera: { flex: 1 },
-  safeOverlay: { flex: 1, justifyContent: 'space-between' },
-  topToolbar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: '4%', paddingTop: '2%' },
-  iconCircle: { width: '12%', aspectRatio: 1, backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
-  
-  viewfinder: { flex: 1, marginVertical: '10%', marginHorizontal: '15%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', borderRadius: 20, position: 'relative' },
-  cornerTL: { position: 'absolute', top: -2, left: -2, width: 20, height: 20, borderTopWidth: 4, borderLeftWidth: 4, borderColor: '#0ea5e9', borderTopLeftRadius: 12 },
-  cornerTR: { position: 'absolute', top: -2, right: -2, width: 20, height: 20, borderTopWidth: 4, borderRightWidth: 4, borderColor: '#0ea5e9', borderTopRightRadius: 12 },
-  cornerBL: { position: 'absolute', bottom: -2, left: -2, width: 20, height: 20, borderBottomWidth: 4, borderLeftWidth: 4, borderColor: '#0ea5e9', borderBottomLeftRadius: 12 },
-  cornerBR: { position: 'absolute', bottom: -2, right: -2, width: 20, height: 20, borderBottomWidth: 4, borderRightWidth: 4, borderColor: '#0ea5e9', borderBottomRightRadius: 12 },
-  
-  bottomToolbar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingBottom: '8%', paddingTop: '4%', backgroundColor: 'rgba(0,0,0,0.3)' },
-  flexSpacer: { flex: 1 },
-  shutterOuter: { width: '18%', aspectRatio: 1, borderRadius: 999, backgroundColor: '#ffffff', padding: '1.5%', alignItems: 'center', justifyContent: 'center' },
-  shutterInner: { flex: 1, width: '100%', borderRadius: 999, borderWidth: 2, borderColor: '#0f172a', backgroundColor: '#ffffff' },
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  statusText: {
+    marginTop: '4%',
+    fontSize: 14,
+    color: '#64748b',
+    fontWeight: 'bold',
+  },
+  header: {
+    padding: '4%',
+    alignItems: 'flex-start',
+  },
+  closeBtn: {
+    width: '10%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: '8%',
+    paddingBottom: '15%',
+  },
+  permissionIconBg: {
+    width: '20%',
+    aspectRatio: 1,
+    borderRadius: 25,
+    backgroundColor: '#e0f2fe',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '6%',
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0f172a',
+    marginBottom: '2%',
+  },
+  descText: {
+    fontSize: 14,
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: '8%',
+  },
+  primaryBtn: {
+    backgroundColor: '#0ea5e9',
+    width: '100%',
+    paddingVertical: '3.5%',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+
+  cameraOuter: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  camera: {
+    flex: 1,
+  },
+  safeOverlay: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  topToolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: '4%',
+    paddingTop: '2%',
+  },
+  iconCircle: {
+    width: '12%',
+    aspectRatio: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  viewfinder: {
+    flex: 1,
+    marginVertical: '10%',
+    marginHorizontal: '15%',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 20,
+    position: 'relative',
+  },
+  cornerTL: {
+    position: 'absolute',
+    top: -2,
+    left: -2,
+    width: 20,
+    height: 20,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: '#0ea5e9',
+    borderTopLeftRadius: 12,
+  },
+  cornerTR: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: '#0ea5e9',
+    borderTopRightRadius: 12,
+  },
+  cornerBL: {
+    position: 'absolute',
+    bottom: -2,
+    left: -2,
+    width: 20,
+    height: 20,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: '#0ea5e9',
+    borderBottomLeftRadius: 12,
+  },
+  cornerBR: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: '#0ea5e9',
+    borderBottomRightRadius: 12,
+  },
+
+  bottomToolbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: '8%',
+    paddingTop: '4%',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  flexSpacer: {
+    flex: 1,
+  },
+  shutterOuter: {
+    width: '18%',
+    aspectRatio: 1,
+    borderRadius: 999,
+    backgroundColor: '#ffffff',
+    padding: '1.5%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shutterInner: {
+    flex: 1,
+    width: '100%',
+    borderRadius: 999,
+    borderWidth: 2,
+    borderColor: '#0f172a',
+    backgroundColor: '#ffffff',
+  },
 });
