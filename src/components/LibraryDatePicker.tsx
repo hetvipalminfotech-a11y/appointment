@@ -17,6 +17,7 @@ interface LibraryDatePickerProps {
   onSelect: (dateStr: string) => void;
   placeholder?: string;
   style?: any;
+  error?: boolean;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -25,7 +26,8 @@ export default function LibraryDatePicker({
   value,
   onSelect,
   placeholder = 'dd/mm/yyyy',
-  style
+  style,
+  error
 }: LibraryDatePickerProps) {
   const [visible, setVisible] = useState(false);
 
@@ -46,11 +48,18 @@ export default function LibraryDatePicker({
 
   return (
     <View style={[{ width: '100%' }, style]}>
-      <TouchableOpacity style={styles.inputWrapper} onPress={handleOpen}>
+      <TouchableOpacity 
+        style={[
+          styles.inputWrapper, 
+          error && styles.errorInputWrapper,
+          !error && value && styles.activeInputWrapper
+        ]} 
+        onPress={handleOpen}
+      >
         <Text style={[styles.input, !value && { color: '#94a3b8' }]}>
           {value || placeholder}
         </Text>
-        <Feather name="calendar" size={16} color="#1e293b" />
+        <Feather name="calendar" size={16} color={error ? "#ef4444" : "#1e293b"} />
       </TouchableOpacity>
 
       <Modal
@@ -161,6 +170,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#94a3b8',
     fontWeight: '600',
+  },
+  activeInputWrapper: {
+    borderColor: '#38bdf8',
+    backgroundColor: '#f0f9ff',
+  },
+  errorInputWrapper: {
+    borderColor: '#ef4444',
+    backgroundColor: '#fef2f2',
   },
 });
 

@@ -21,6 +21,7 @@ export default function AddPatientScreen() {
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
   const [cameraVisible, setCameraVisible] = useState(false);
   const [photoOptionsVisible, setPhotoOptionsVisible] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handlePickFromGallery = async () => {
     setPhotoOptionsVisible(false);
@@ -59,20 +60,38 @@ export default function AddPatientScreen() {
   ];
 
   const handleCreate = () => {
-    const missingFields = [];
-    if (!fullName.trim()) missingFields.push('Full Name');
-    if (!phone.trim()) missingFields.push('Phone');
-    if (!caseId.trim()) missingFields.push('Case ID');
-    if (!birthDate) missingFields.push('Birth Date');
+    const newErrors: { [key: string]: string } = {};
+    
+    if (!fullName.trim()) {
+      newErrors.fullName = 'Required';
+    } else if (fullName.trim().length < 3) {
+      newErrors.fullName = 'Too short';
+    }
 
-    if (missingFields.length > 0) {
-      Alert.alert('Required Field Missing', `Please enter the following field(s): ${missingFields.join(', ')}`);
+    if (!phone.trim()) {
+      newErrors.phone = 'Required';
+    } else if (!/^\d{10}$/.test(phone.trim().replace(/\s/g, ''))) {
+      newErrors.phone = 'Invalid 10-digit';
+    }
+
+    if (!caseId.trim()) {
+      newErrors.caseId = 'Required';
+    }
+
+    if (!birthDate) {
+      newErrors.birthDate = 'Required';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      Alert.alert('Validation Error', 'Please fix the errors in the form.');
       return;
     }
 
     addPatient({
       fullName,
-      phone,
+      phone: phone.trim().replace(/\s/g, ''),
       caseId,
       birthDate,
       gender,
@@ -118,34 +137,72 @@ export default function AddPatientScreen() {
                 <View style={styles.row}>
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>FULL NAME *</Text>
-                    <View style={[styles.inputWrapper, styles.activeInputWrapper]}>
-                      <Feather name="user" size={16} color="#0ea5e9" style={styles.inputIcon} />
-                      <TextInput style={styles.input} placeholder="Name" value={fullName} onChangeText={setFullName} placeholderTextColor="#94a3b8" />
+                    <View style={[styles.inputWrapper, !!errors.fullName && styles.inputErrorWrapper, !errors.fullName && fullName ? styles.activeInputWrapper : null]}>
+                      <Feather name="user" size={16} color={errors.fullName ? "#ef4444" : (fullName ? "#0ea5e9" : "#94a3b8")} style={styles.inputIcon} />
+                      <TextInput 
+                        style={styles.input} 
+                        placeholder="Name" 
+                        value={fullName} 
+                        onChangeText={(txt) => {
+                          setFullName(txt);
+                          if (errors.fullName) setErrors(prev => ({ ...prev, fullName: '' }));
+                        }} 
+                        placeholderTextColor="#94a3b8" 
+                      />
                     </View>
+                    {!!errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
                   </View>
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>PHONE *</Text>
-                    <View style={styles.inputWrapper}>
-                      <Feather name="phone" size={16} color="#94a3b8" style={styles.inputIcon} />
-                      <TextInput style={styles.input} placeholder="10-digit" keyboardType="phone-pad" value={phone} onChangeText={setPhone} placeholderTextColor="#94a3b8" />
+                    <View style={[styles.inputWrapper, !!errors.phone && styles.inputErrorWrapper, !errors.phone && phone ? styles.activeInputWrapper : null]}>
+                      <Feather name="phone" size={16} color={errors.phone ? "#ef4444" : (phone ? "#0ea5e9" : "#94a3b8")} style={styles.inputIcon} />
+                      <TextInput 
+                        style={styles.input} 
+                        placeholder="10-digit" 
+                        keyboardType="phone-pad" 
+                        value={phone} 
+                        maxLength={10}
+                        onChangeText={(txt) => {
+                          const cleaned = txt.replace(/[^0-9]/g, '');
+                          setPhone(cleaned);
+                          if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }));
+                        }} 
+                        placeholderTextColor="#94a3b8" 
+                      />
                     </View>
+                    {!!errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
                   </View>
                 </View>
 
                 <View style={styles.row}>
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>CASE ID *</Text>
-                    <View style={styles.inputWrapper}>
-                      <Feather name="info" size={16} color="#94a3b8" style={styles.inputIcon} />
-                      <TextInput style={styles.input} placeholder="ID" value={caseId} onChangeText={setCaseId} placeholderTextColor="#94a3b8" />
+                    <View style={[styles.inputWrapper, !!errors.caseId && styles.inputErrorWrapper, !errors.caseId && caseId ? styles.activeInputWrapper : null]}>
+                      <Feather name="info" size={16} color={errors.caseId ? "#ef4444" : (caseId ? "#0ea5e9" : "#94a3b8")} style={styles.inputIcon} />
+                      <TextInput 
+                        style={styles.input} 
+                        placeholder="ID" 
+                        value={caseId} 
+                        onChangeText={(txt) => {
+                          setCaseId(txt);
+                          if (errors.caseId) setErrors(prev => ({ ...prev, caseId: '' }));
+                        }} 
+                        placeholderTextColor="#94a3b8" 
+                      />
                     </View>
+                    {!!errors.caseId && <Text style={styles.errorText}>{errors.caseId}</Text>}
                   </View>
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>BIRTH DATE *</Text>
                     <LibraryDatePicker
                       value={birthDate}
-                      onSelect={setBirthDate}
+                      onSelect={(val) => {
+                        setBirthDate(val);
+                        if (errors.birthDate) setErrors(prev => ({ ...prev, birthDate: '' }));
+                      }}
+                      error={!!errors.birthDate}
                     />
+                    {!!errors.birthDate && <Text style={styles.errorText}>{errors.birthDate}</Text>}
                   </View>
                 </View>
 
@@ -588,5 +645,16 @@ const styles = StyleSheet.create({
     color: '#64748b',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 9,
+    fontWeight: '700',
+    marginTop: 4,
+    marginLeft: 12,
+  },
+  inputErrorWrapper: {
+    borderColor: '#ef4444',
+    backgroundColor: '#fef2f2',
   },
 });
